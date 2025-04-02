@@ -1,0 +1,78 @@
+<dependencies>
+    <!-- Spring Core -->
+    <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-context</artifactId>
+        <version>5.3.30</version>
+    </dependency>
+</dependencies>
+
+public class Course {
+    private String courseName;
+    private int duration;
+
+    // Constructor
+    public Course(String courseName, int duration) {
+        this.courseName = courseName;
+        this.duration = duration;
+    }
+
+    // Getters
+    public String getCourseName() {
+        return courseName;
+    }
+
+    public int getDuration() {
+        return duration;
+    }
+}
+
+public class Student {
+    private String name;
+    private Course course; // Dependency
+
+    // Constructor Injection
+    public Student(String name, Course course) {
+        this.name = name;
+        this.course = course;
+    }
+
+    public void displayStudentInfo() {
+        System.out.println("Student Name: " + name);
+        System.out.println("Enrolled in Course: " + course.getCourseName());
+        System.out.println("Course Duration: " + course.getDuration() + " months");
+    }
+}
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class AppConfig {
+
+    @Bean
+    public Course course() {
+        return new Course("Spring Framework", 3);
+    }
+
+    @Bean
+    public Student student() {
+        return new Student("Alice Johnson", course());
+    }
+}
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+public class MainApp {
+    public static void main(String[] args) {
+        // Load Spring Context
+        ApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
+
+        // Retrieve the Student Bean
+        Student student = context.getBean(Student.class);
+
+        // Display Student Details
+        student.displayStudentInfo();
+    }
+}
